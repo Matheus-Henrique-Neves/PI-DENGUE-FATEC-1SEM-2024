@@ -2,6 +2,7 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
+const alertcity = require('./alertcity.json');
 
 // Criando uma nova aplicação Express
 const app = express();
@@ -13,7 +14,12 @@ app.use(cors());
 app.get('/api', async (req, res) => {
     try {
         // Fazendo a solicitação para a API
+        
         const apiRes = await axios.get('https://info.dengue.mat.br/api/alertcity/?geocode=3520509&disease=dengue&format=json&ew_start=16&ey_start=2023&ew_end=17&ey_end=2024');
+        if (apiRes.data.error_message === "connection already closed") {
+            res.json(alertcity);
+            apiRes=alertcity;
+        }
 
         // Enviando a resposta da API de volta ao cliente
         res.json(apiRes.data);
